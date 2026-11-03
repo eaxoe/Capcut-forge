@@ -1,0 +1,36 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+
+      - name: Install ffmpeg (macOS)
+        if: runner.os == 'macOS'
+        run: brew install ffmpeg
+
+      - name: Install ffmpeg (Windows)
+        if: runner.os == 'Windows'
+        run: choco install ffmpeg -y --no-progress
+
+      - name: Install
+        run: uv sync --extra mcp --group dev
+
+      - name: Tests
+        run: uv run --group dev pytest -q
+
+      - name: CLI and MCP server start
+        run: |
+          uv run capcut-forge --help
+          uv run python -c "import capcut_forge.mcp_server as m; print(m.server.name)"

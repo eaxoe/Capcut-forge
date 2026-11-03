@@ -1,0 +1,40 @@
+[project]
+name = "capcut-forge"
+version = "0.1.0"
+description = "Edit-plan driven video pipeline: auto-cut, captions, music, zooms -> CapCut draft or ffmpeg render."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=1.26",
+    "pillow>=11.0",
+]
+
+[project.optional-dependencies]
+# Word-level transcription (downloads a Whisper model on first use).
+transcribe = ["faster-whisper>=1.1"]
+# Live lane: drive the open CapCut window through the macOS accessibility API
+# (macOS only; on Windows this extra installs nothing).
+live = [
+    "pyobjc-framework-ApplicationServices>=11.0; sys_platform == 'darwin'",
+    "pyobjc-framework-Quartz>=11.0; sys_platform == 'darwin'",
+]
+# Expose capcut-forge as tools to Claude / any MCP client.
+mcp = ["mcp>=2.3,<3"]
+
+[project.scripts]
+capcut-forge = "capcut_forge.cli:main"
+capcut-forge-mcp = "capcut_forge.mcp_server:main"
+
+[dependency-groups]
+dev = ["pytest>=8.3"]
+
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["capcut_forge"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

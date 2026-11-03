@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "capcut-forge": {
+      "command": "uv",
+      "args": ["run", "--extra", "mcp", "capcut-forge-mcp"]
+    }
+  }
+}
